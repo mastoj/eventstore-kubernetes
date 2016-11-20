@@ -4,7 +4,7 @@ metadata:
   name: "es"
 spec:
   selector:
-    app: "es"
+    escluster: "es"
   ports:
     - protocol: "TCP"
       port: 2113

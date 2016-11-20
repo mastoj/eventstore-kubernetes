@@ -7,6 +7,6 @@ spec:
     app: "frontend-es"
   ports:
     - protocol: "TCP"
-      port: 80
-      targetPort: 80
+      port: 2113
+      targetPort: 2113
   type: LoadBalancer
