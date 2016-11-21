@@ -45,6 +45,16 @@ function createFrontendService {
     kubectl create -f ../services/frontend-es.yaml
 }
 
+function createDisks {
+    local count=$1
+    for ((c=1; c<=$count; c++ ))
+    do
+        if ! gcloud compute disks list esdisk-$c | grep esdisk-$c; then
+            gcloud compute disks create --size=10GB esdisk-$c
+        fi
+    done
+}
+
 function createEsCluster {
     local count=$1
     createSpecs $count
@@ -59,6 +69,7 @@ function createFrontEnd {
 }
 
 init
-validateInput $1
+validateInput $1 #sets the variable $count
+createDisks $count
 createEsCluster $count
 createFrontEnd

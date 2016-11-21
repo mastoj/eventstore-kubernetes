@@ -42,9 +42,20 @@ spec:
               value: "http://*:2114/"
             - name: EVENTSTORE_EXT_HTTP_PREFIXES
               value: "http://*:2113/"
+#            - name: EVENTSTORE_DB
+#              value: "/usr/share/eventstore/data"
+#            - name: EVENTSTORE_LOG
+#              value: "/usr/share/eventstore/log"
           ports:
             - containerPort: 2113
             - containerPort: 2114
             - containerPort: 1111
             - containerPort: 1112
-
+          volumeMounts:
+            - mountPath: "/usr/share/eventstore"
+              name: espd
+      volumes:
+        - name: espd
+          gcePersistentDisk:
+            pdName: esdisk-${nodenumber}
+            fsType: ext4
