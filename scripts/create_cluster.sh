@@ -49,8 +49,11 @@ function createDisks {
     local count=$1
     for ((c=1; c<=$count; c++ ))
     do
-        if ! gcloud compute disks list esdisk-$c | grep esdisk-$c; then
+        if gcloud compute disks list esdisk-$c | grep esdisk-$c; then
+            echo "creating disk: esdisk-$c" 
             gcloud compute disks create --size=10GB esdisk-$c
+        else
+            echo "disk already exists: esdisk-$c"
         fi
     done
 }

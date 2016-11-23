@@ -1,13 +1,17 @@
-apiVersion: v1
-kind: Pod
+apiVersion: extensions/v1beta1
+kind: Deployment
 metadata:
-    name: es-${nodenumber}
-    labels:
-        app: es
+  name: es-${nodenumber}
 spec:
-    hostname: es-${nodenumber}
-    containers:
-        - name: es
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: es-${nodenumber}
+        escluster: es
+    spec:
+      containers:
+        - name: es-${nodenumber}
           image: "eventstore/eventstore"
           env: 
             - name: EVENTSTORE_INT_IP
@@ -29,7 +33,7 @@ spec:
             - name: EVENTSTORE_CLUSTER_SIZE
               value: "${nodecount}"
             - name: EVENTSTORE_CLUSTER_DNS
-              value: "es"
+              value: "es.default.svc.cluster.local"
             - name: EVENTSTORE_CLUSTER_GOSSIP_PORT
               value: "2114"
             - name: EVENTSTORE_GOSSIP_ALLOWED_DIFFERENCE_MS
@@ -38,9 +42,20 @@ spec:
               value: "http://*:2114/"
             - name: EVENTSTORE_EXT_HTTP_PREFIXES
               value: "http://*:2113/"
+            - name: EVENTSTORE_DB
+              value: "/usr/data/eventstore/data"
+            - name: EVENTSTORE_LOG
+              value: "/usr/data/eventstore/log"
           ports:
             - containerPort: 2113
             - containerPort: 2114
             - containerPort: 1111
             - containerPort: 1112
-
+          volumeMounts:
+            - mountPath: "/usr/data/eventstore"
+              name: espd
+      volumes:
+        - name: espd
+          gcePersistentDisk:
+            pdName: esdisk-${nodenumber}
+            fsType: ext4
